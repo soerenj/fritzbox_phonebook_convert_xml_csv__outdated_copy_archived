@@ -856,9 +856,18 @@ function convert_to_xml(){
       if(type!='')      add+=' type="'+type+'"';
       if(quickDial!='') add+=' quickdial="'+quickDial+'"';
       if(vanity!='')    add+=' vanity="'+vanity+'"';
-      numbersOut += '<number'+add+'>'+sanitize_realName(phone)+'</number>\n'; 
-      numbersOutCounter++;
-      
+      if(sanitize_realName(phone).length>0)
+      {
+          if(sanitize_realName(phone).length>2 && sanitize_realName(phone).search(/[0-9]{3}/)>=0)
+          {
+             numbersOut += '<number'+add+'>'+sanitize_realName(phone)+'</number>\n'; //number has a min length 3 and minimal three numbers
+             numbersOutCounter++;
+          }
+          else
+          {
+            logError.push("Warning: Name: "+column[0]+" ; Column Number "+(i+1)+": number too short to add / or does not contains 3 numbers: "     +sanitize_realName(phone));
+          }
+      }
        if(breakAfter) break;
       }
       
