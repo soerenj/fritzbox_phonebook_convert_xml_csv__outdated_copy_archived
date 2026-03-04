@@ -39,8 +39,8 @@
 	"name": "convert phonebook Fritzbox",
 	"description": "convert phonebook files from router Fritzbox .xml to .csv and backwards",
 	"programmingLanguage": "javascript",
-	"dateModified": "2026-03-02",
-	"softwareVersion": "0.35",
+	"dateModified": "2026-03-04",
+	"softwareVersion": "0.351",
 	"inLanguage": ["en", "de"],
     "mainEntityOfPage":"https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv/fritzbox_phonebook_convert_csv.html",
 	"url":"https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv/fritzbox_phonebook_convert_csv.html",
@@ -51,8 +51,8 @@
 </script>
 <!--
  /*
- * version: 0.35
- * date: 2026-03-02
+ * version: 0.351
+ * date: 2026-03-04
  *
  * Licence 
  *
@@ -375,7 +375,7 @@ input + label {vertical-align:top; }
     <span lang="en" class="en">Name of new Phonebook-Name: </span>
     <span lang="de" class="de">Name des Telefonbuches:</span>
   </label>
-  <input type="text" value="phonebook_name" title="" id="new_phonebook_name" onchange="new_phonebook_name=this.value" autocomplete="off" /> 
+  <input type="text" value="phonebook_name" title="" id="phonebook_name" onKeyUp="document.getElementById('phonebook_name_okbutton').style.display=''" onchange="updatePhonebookName(this.value)" autocomplete="off" /> <button value="ok" id="phonebook_name_okbutton" style="display:none" >OK</button>
   <span style="color:#999;">
     <span lang="en" class="en">That is the shown new Phonebook-Name in the Fritzbox. This is not the filename.</span>
     <span lang="de" class="de">Das ist der neue Telefonbuch-Namen in der Fritzbox selbst. Es ist nicht der Datei-Name.</span>
@@ -497,7 +497,7 @@ if(detected_default_langcountrycode!='')e.value=detected_default_langcountrycode
 if(document.getElementById('file-input_drag-n-drop').value!='' ||
    document.getElementById('file-input_xml').value!='' ||
    document.getElementById('file-input_format2').value!='')document.getElementById('file-input_reset').style.display='block';
-document.getElementById('new_phonebook_name').value=new_phonebook_name;
+document.getElementById('phonebook_name').value=new_phonebook_name;
 var file_upload__accepted_filetype = ".xml,.csv,text/csv,application/xml,text/xml";
 var file_upload__accepted_filetype__xml = ".xml,application/xml,text/xml";
 var file_upload__accepted_filetype__format2 = ".csv,text/csv";
@@ -711,7 +711,7 @@ function sanitize_realName(realName,inkluding_quotes){
 function convert_to_xml(){
   var text = document.getElementById('phonebook_csv').value;
   var out = ''; var realName; logError=[];
-  out += '<?xml version="1.0" encoding="utf-8"?>\n<phonebooks>\n<phonebook owner="" name="'+new_phonebook_name+'">\n';
+  out += '<?xml version="1.0" encoding="utf-8"?>\n<phonebooks>\n<phonebook owner="" name="'+sanitize_realName(new_phonebook_name,false)+'">\n';
   var contacts = CSVToArray(text);
   var hasHeadlineQuickDial=false;
   var hasHeadlineVanity   =false;
@@ -1638,6 +1638,11 @@ function table_full_view__toggleClass(elemId,classToggle){
    if(classToggle=="phonebook_table_fullview" && d2.classList.contains("phonebook_table_fullview_right"))
      d2.classList.remove("phonebook_table_fullview_right");
  }else d.classList.add(classToggle);
+}
+function updatePhonebookName(value){
+    new_phonebook_name=value;
+    document.getElementById('phonebook_xml').value = document.getElementById('phonebook_xml').value.replace(new RegExp("(<phonebook[^>]*name=\")([^\"]*)(\")"),"$1"+sanitize_realName(new_phonebook_name)+"$3");
+    document.getElementById('phonebook_name_okbutton').style.display='none';
 }
 
 create_xml_table();
