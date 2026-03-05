@@ -40,7 +40,7 @@
 	"description": "convert phonebook files from router Fritzbox .xml to .csv and backwards",
 	"programmingLanguage": "javascript",
 	"dateModified": "2026-03-05",
-	"softwareVersion": "0.352",
+	"softwareVersion": "0.353",
 	"inLanguage": ["en", "de"],
     "mainEntityOfPage":"https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv/fritzbox_phonebook_convert_csv.html",
 	"url":"https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv/fritzbox_phonebook_convert_csv.html",
@@ -51,7 +51,7 @@
 </script>
 <!--
  /*
- * version: 0.352
+ * version: 0.353
  * date: 2026-03-05
  *
  * Licence 
@@ -179,7 +179,7 @@ input + label {vertical-align:top; }
 </p>
 <div id="select_file_and_textarea" class="advanced_view advanced_view__hide">
 <div id="select_file_xml_div">
-<label for="phonebook_xml">From Fritzbox .XML File:</label><br>
+<label for="phonebook_xml">Fritzbox .XML File:</label><br>
 <textarea id="phonebook_xml" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
 <?xml version="1.0" encoding="utf-8"?>
 <phonebooks>
@@ -223,8 +223,34 @@ input + label {vertical-align:top; }
 </div>
 
 <div id="select_file_csv_div">
-<label for="phonebook_csv">From .CSV File:</label> <br/>
+<span style="float:right" title="load an example">
+<span lang="en" class="en">Examples:</span><span lang="de" class="de">Beispiele:</span> &nbsp; <a href="#" onClick="loadExampleCsv(1); return false;">Style 1</a> &nbsp; <a href="#" onclick="loadExampleCsv(2); return false;">Style 2</a> &nbsp; <a href="#" onclick="loadExampleCsv(3); return false;">Style 3</a></span>
+<label for="phonebook_csv">.CSV File:</label> <br/>
+
 <textarea id="phonebook_csv" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">name, phone, type, prio, email, quickdial, vanity
+"Person C", "080123456789"
+"Person C", "0801234567890978768"
+"Person C", "01769999999"
+"Person D", "+49176987654321", "+498091239856789"
+"Person E", "004949176222222", "mobile", "", "test@example.com"
+"Person E", "+4911111", "work", "1", "test@example.com", 8, 1
+"Person E", "00494933333", "home", "", "test@example.com"
+</textarea>
+<textarea id="phonebook_csv__example_style1" style="display:none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">name, phone, (maybe more phones following...)
+"Person C", "080123456789", "0801234567890978768" , "01769999999"
+"Person D", "+49176987654321", "+498091239856789"
+"Person E", "004949176222222", "+4911111" , "00494933333"
+</textarea>
+<textarea id="phonebook_csv__example_style2" style="display:none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">name, phone
+"Person C", "080123456789"
+"Person C", "0801234567890978768"
+"Person C", "01769999999"
+"Person D", "+49176987654321"
+"Person E", "004949176222222"
+"Person E", "+4911111"
+"Person E", "00494933333"
+</textarea>
+<textarea id="phonebook_csv__example_style3" style="display:none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">name, phone, type, prio, email, quickdial, vanity
 "Person C", "080123456789"
 "Person C", "0801234567890978768"
 "Person C", "01769999999"
@@ -463,7 +489,7 @@ input + label {vertical-align:top; }
 <input type="button" id="file-input_reset" style="display:none;margin-top:22pt" value="reset" onclick="reset_to_default()" />
 </br>
 <script language="JavaScript">
-<!--
+//<!--
 var last_uploaded_file__fieldid='file-input_drag-n-drop';
 var counter_convert = 0;
 var show_advanced_view__state = false;
@@ -530,6 +556,17 @@ function reset_to_default(){
  document.getElementById('file-input_xml').value='';
  document.getElementById('file-input_format2').value='';
  document.getElementById('ready').style.display="none";
+ create_xml_table();
+ create_csv_table();
+}
+
+function loadExampleCsv(styleNumber){
+    document.getElementById('phonebook_csv').value =  document.getElementById('phonebook_csv__example_style'+styleNumber).defaultValue;
+    var o = document.getElementsByName("setting__xml2csv__style_text");
+    for(var i=0;i<o.length;i++){ 
+       if(o[i].value==styleNumber){ o[i].checked=true; setting__xml2csv__style=styleNumber; break; }
+    }
+    create_csv_table();
 }
 
 function showOnlySupportedChange(v){
