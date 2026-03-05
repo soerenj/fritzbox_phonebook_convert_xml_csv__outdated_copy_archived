@@ -942,27 +942,34 @@ function convert_to_xml(){
 }
 
 function create_csv_table(){
+  document.getElementById('phonebook_csv_table').innerHTML='';
   var text = document.getElementById('phonebook_csv').value;
   var out = '';
   var t = "reload"; if(selectedLanguage=="de")t="aktualisieren";
-  out="<br><span style='text-align:right'><button onClick='create_csv_table()' id='table_csv_reload_button' style='display:none;' class='maybebutton' title='update table: read textarea again and create table'>🗘 "+t+"<!--update table --></button></span><table class='border_table_grew'>";//↺↻⟲⟳🔁🔃🔄
-  out+='<table class="border_table_grew">';
+  var rootDiv = document.createElement('div');
+  rootDiv.innerHTML="<br><span style='text-align:right'><button onClick='create_csv_table()' id='table_csv_reload_button' style='display:none;' class='maybebutton' title='update table: read textarea again and create table'>🗘 "+t+"<!--update table --></button></span><table class='border_table_grew'>";//↺↻⟲⟳🔁🔃🔄
+  var table = document.createElement('table');
+  table.setAttribute('class','border_table_grew');
   var contacts = CSVToArray(text);
+
   for(var row=0;row<contacts.length;row++)
   { 
     if(contacts[row]=='')continue;
     var elements = contacts[row];
-    out+='<tr>';
-    for(var c=0;c<elements.length;c++)
-      out+="<td>"+myTrimQuotes(sanitize_realName(elements[c].substring(0)))+"</td>";
-    out+='</tr>';
+    var tr = document.createElement('tr');
+    for(var c=0;c<elements.length;c++){
+      var td = document.createElement('td');
+      td.innerText=myTrimQuotes(sanitize_realName(elements[c].substring(0)));
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
   }
-  out+="</table>";
+  rootDiv.appendChild(table);
   t = "shrink"; if(selectedLanguage=="de")t="verkleinern";
-  out+="<button id=\"phonebook_csv_table__flip_close\" onClick=\"table_full_view__toggleClass('phonebook_csv_table','phonebook_table_fullview'); document.getElementById('phonebook_csv_table__collaps').style.display='block'\" class=\"maybebutton\" style=\"display:inline.block\" title=\"smaller view\">⌃ "+t+"</button> ";
+  rootDiv.innerHTML+="<button id=\"phonebook_csv_table__flip_close\" onClick=\"table_full_view__toggleClass('phonebook_csv_table','phonebook_table_fullview'); document.getElementById('phonebook_csv_table__collaps').style.display='block'\" class=\"maybebutton\" style=\"display:inline.block\" title=\"smaller view\">⌃ "+t+"</button> ";
   t = "enlarge (strech)"; if(selectedLanguage=="de")t="vergrößern (breiter)";
-  out+="<button id=\"phonebook_csv_table__collaps_right\" onClick=\"table_full_view__toggleClass('select_file_csv_div','phonebook_table_fullview_right');\" class=\"maybebutton\" title=\"show in full size (to the right side)\"> 〉 "+t+"</button><br>&nbsp;";
-  document.getElementById('phonebook_csv_table').innerHTML=out;
+  rootDiv.innerHTML+="<button id=\"phonebook_csv_table__collaps_right\" onClick=\"table_full_view__toggleClass('select_file_csv_div','phonebook_table_fullview_right');\" class=\"maybebutton\" title=\"show in full size (to the right side)\"> 〉 "+t+"</button><br>&nbsp;";
+  document.getElementById('phonebook_csv_table').appendChild(rootDiv);
   if( document.getElementById('phonebook_csv_table').scrollHeight!= document.getElementById('phonebook_csv_table').clientHeight )
     document.getElementById('phonebook_csv_table__collaps').style.display='block';
   else document.getElementById('phonebook_csv_table__collaps').style.display='none';
