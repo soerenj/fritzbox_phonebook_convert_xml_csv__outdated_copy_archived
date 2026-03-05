@@ -39,8 +39,8 @@
 	"name": "convert phonebook Fritzbox",
 	"description": "convert phonebook files from router Fritzbox .xml to .csv and backwards",
 	"programmingLanguage": "javascript",
-	"dateModified": "2026-03-04",
-	"softwareVersion": "0.351",
+	"dateModified": "2026-03-05",
+	"softwareVersion": "0.352",
 	"inLanguage": ["en", "de"],
     "mainEntityOfPage":"https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv/fritzbox_phonebook_convert_csv.html",
 	"url":"https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv/fritzbox_phonebook_convert_csv.html",
@@ -51,8 +51,8 @@
 </script>
 <!--
  /*
- * version: 0.351
- * date: 2026-03-04
+ * version: 0.352
+ * date: 2026-03-05
  *
  * Licence 
  *
@@ -183,26 +183,38 @@ input + label {vertical-align:top; }
 <textarea id="phonebook_xml" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
 <?xml version="1.0" encoding="utf-8"?>
 <phonebooks>
-<phonebook owner="" name="phonebook1">
-<contact>
-<category>0</category>
-<person><realName>Person A</realName></person>
-<telephony nid="1">
-  <number type="mobile" prio="1" id="0" quickdial="1" vanity="01">0176123456789</number>
-</telephony>
-<services /><setup />
-<features doorphone="0" /><mod_time>1535972380</mod_time><uniqueid>227</uniqueid>
-</contact>
-<contact>
-<category>0</category>
-<person><realName>Person B</realName></person>
-<telephony nid="1">
-  <number type="mobile" prio="1" id="0">+49176987654321</number>
-</telephony>
-<services nid="1"><email classifier="private" id="0">test@example.com</email></services><setup />
-<features doorphone="0" /><mod_time>1535972450</mod_time><uniqueid>229</uniqueid>
-</contact>
-</phonebook>
+  <phonebook owner="" name="phonebook1">
+    <contact>
+      <category>0</category>
+      <person>
+        <realName>Person A</realName>
+      </person>
+      <telephony nid="1">
+        <number type="mobile" prio="1" id="0" quickdial="1" vanity="01">0176123456789</number>
+      </telephony>
+      <services />
+      <setup />
+      <features doorphone="0" />
+      <mod_time>1535972380</mod_time>
+      <uniqueid>227</uniqueid>
+    </contact>
+    <contact>
+      <category>0</category>
+      <person>
+        <realName>Person B</realName>
+      </person>
+      <telephony nid="1">
+        <number type="mobile" prio="1" id="0">+49176987654321</number>
+      </telephony>
+      <services nid="1">
+        <email classifier="private" id="0">test@example.com</email>
+      </services>
+      <setup />
+      <features doorphone="0" />
+      <mod_time>1535972450</mod_time>
+      <uniqueid>229</uniqueid>
+    </contact>
+  </phonebook>
 </phonebooks>
 </textarea>
 <div id="phonebook_xml_table" class="phonebook_table">
@@ -711,7 +723,7 @@ function sanitize_realName(realName,inkluding_quotes){
 function convert_to_xml(){
   var text = document.getElementById('phonebook_csv').value;
   var out = ''; var realName; logError=[];
-  out += '<?xml version="1.0" encoding="utf-8"?>\n<phonebooks>\n<phonebook owner="" name="'+sanitize_realName(new_phonebook_name,false)+'">\n';
+  out += '<?xml version="1.0" encoding="utf-8"?>\n<phonebooks>\n  <phonebook owner="" name="'+sanitize_realName(new_phonebook_name,false)+'">\n';
   var contacts = CSVToArray(text);
   var hasHeadlineQuickDial=false;
   var hasHeadlineVanity   =false;
@@ -785,15 +797,15 @@ function convert_to_xml(){
         category = 0;
         //if(lastCategory!='')category=1;
         
-        out += '<contact>\n<category>'+category+'</category>\n';
-        out += '<person><realName>'+realName+'</realName></person>\n';
-        out += '<telephony nid="'+(row-1)+'">\n';
+        out += '    <contact>\n      <category>'+category+'</category>\n';
+        out += '      <person>\n        <realName>'+realName+'</realName>\n      </person>\n';
+        out += '      <telephony nid="'+(row-1)+'">\n';
         
         out += numbersOut;
-        out += '</telephony>\n';
-        if(lastEmail!='') out += '<services nid="'+row+'"><email classifier="private" id="0">'+sanitize_realName(lastEmail)+'</email></services>';
-        else out += '<services />';
-        out += '<setup />\n<features doorphone="0" /><mod_time></mod_time><uniqueid></uniqueid>\n</contact>\n';
+        out += '      </telephony>\n';
+        if(lastEmail!='') out += '      <services nid="'+row+'">\n        <email classifier="private" id="0">'+sanitize_realName(lastEmail)+'</email>\n      </services>';
+        else out += '      <services />';
+        out += '\n      <setup />\n      <features doorphone="0" />\n      <mod_time></mod_time>\n      <uniqueid></uniqueid>\n    </contact>\n';
         numbersOut='';lastEmail='';/*lastCategory='';*/ numbersOutCounter=0; lastQuickDial=''; lastVanity='';
       }
     }
@@ -860,7 +872,7 @@ function convert_to_xml(){
       {
           if(sanitize_realName(phone).length>2 && sanitize_realName(phone).search(/[0-9]{3}/)>=0)
           {
-             numbersOut += '<number'+add+'>'+sanitize_realName(phone)+'</number>\n'; //number has a min length 3 and minimal three numbers
+             numbersOut += '        <number'+add+'>'+sanitize_realName(phone)+'</number>\n'; //number has a min length 3 and minimal three numbers
              numbersOutCounter++;
           }
           else
@@ -883,7 +895,7 @@ function convert_to_xml(){
 
   }
 
-  out += '</phonebook>\n</phonebooks>';
+  out += '  </phonebook>\n</phonebooks>';
   document.getElementById('phonebook_xml').value = out;
   show_errors(logError);
   create_xml_table();
