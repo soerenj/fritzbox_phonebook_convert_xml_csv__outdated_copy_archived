@@ -870,9 +870,10 @@ function convert_to_xml(){
       if(vanity!='')    add+=' vanity="'+vanity+'"';
       if(sanitize_realName(phone).length>0)
       {
-          if(sanitize_realName(phone).length>2 && sanitize_realName(phone).search(/[0-9]{3}/)>=0)
+          if( sanitize_realName(phone).length>2 &&
+             (sanitize_realName(phone).search(/[0-9]{3}/)>=0 || sanitize_realName(phone).search(/\*\*[0-9]{1}/)>=0) )
           {
-             numbersOut += '        <number'+add+'>'+sanitize_realName(phone)+'</number>\n'; //number has a min length 3 and minimal three numbers
+             numbersOut += '        <number'+add+'>'+sanitize_realName(phone)+'</number>\n'; //number has a min length 3 and minimal three numbers //or must be internal number like: **1
              numbersOutCounter++;
           }
           else
